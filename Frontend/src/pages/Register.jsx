@@ -9,7 +9,7 @@ const Register=()=>{
                         <h1 className="text-3xl font-bold mb-2">Welcome Back!</h1>
                         <p>To keep connected with us please login with you personal info</p>
                     </div>
-                    <button type="button" className="bg-slate-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Sign in</button>
+                    <button type="button" className="bg-slate-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-1/4">Sign in</button>
                 </div>
                 <div className="w-1/2 h-full bg-white flex flex-col justify-center rounded-r-lg items-center gap-6">
                     <h1 className="text-3xl font-bold">Create Account</h1>
@@ -42,7 +42,7 @@ const Register=()=>{
                             <label htmlFor="floating_password" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"><i className="fa-solid fa-lock"></i> Password</label>
                         </div>
                     </form>
-                    <button type="button" className="bg-slate-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Sign up</button>
+                    <button type="button" className="bg-slate-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-1/4">Sign up</button>
                 </div>
             </div>
         </div>
