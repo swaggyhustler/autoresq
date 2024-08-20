@@ -1,6 +1,6 @@
 const Navbar=()=>{
     return (
-        <nav className="flex justify-around p-5">
+        <nav className="flex justify-between p-5 shadow-lg rounded-2xl px-lg">
             <span className="font-black font-mono text-2xl">AutoResQ</span>
             <ul className="flex justify-around gap-5">
                 <li><a href="#">link1</a></li>
