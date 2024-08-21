@@ -25,10 +25,13 @@ const login = async (req, res) => {
 
   const {password}=req.body;
   bcrypt.compare(password, user.password, (err, result)=>{
+    if(err){
+      return res.json({message: err});
+    }
     if(result){
       return res.status(200).json({userAuthorized: true});
     }else{
-      return res.status(401).json({userAuthorized: false, message: "User unauthorized"});
+      return res.status(401).json({userAuthorized: false, message: "Wrong Password"});
     }
   });
 

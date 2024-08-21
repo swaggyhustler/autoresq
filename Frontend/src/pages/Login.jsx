@@ -4,20 +4,28 @@ import {useContext} from "react";
 import GlobalContext from "../contexts/GlobalContext.jsx";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS
+
 const Login=()=>{
     const {loginData} = useContext(GlobalContext); 
     const navigate=useNavigate();
+    const showErrorToast=(message)=>{
+        toast.error(message);
+    }
     const handleSubmit= async (e)=>{
         e.preventDefault();  
         try{
             const res = await axios.post("http://localhost:3000/api/auth/login", loginData);
+            
             if(res.data.userAuthorized){
+                showErrorToast();
                 navigate("/home");
             }else{
                 navigate("/login");
             }
         }catch(error){
-            console.log("E: Something went wrong, \n", error);
+            showErrorToast(error.response.data.message);
         }
     }
     return (
@@ -37,6 +45,7 @@ const Login=()=>{
                         </form>
                     </Login_Register_Template>
             </div>
+            <ToastContainer />
         </div>
     )
 }
