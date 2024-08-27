@@ -1,8 +1,9 @@
 import express from 'express';
-import {addMechLoc} from '../controllers/mechLocationController.js';
+import {addMechLoc, getMechLoc} from '../controllers/mechLocationController.js';
 
 const router=express.Router();
 
-router.post("/mechLocation", addMechLoc);
-
+router
+.post("/addMechLocation", addMechLoc)
+.get("/getMechLocation", getMechLoc);
 export default router;

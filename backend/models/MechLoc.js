@@ -7,11 +7,15 @@ const MechLocSchema=mongoose.Schema({
         unique: true,
         maxlength: [10, 'Mechanic ID must be less than 10 characters']
     },
-    address: {
+    type: {
         type: String,
-        required: [true, 'Please add an address']
+        default: "Feature"
     },
-    location: {
+    properties: {
+        description: String,
+        icon: String
+    },
+    geometry: {
         type:{
             type: String,
             enum: ['Point'],
@@ -19,8 +23,7 @@ const MechLocSchema=mongoose.Schema({
         coordinates:{
             type: [Number],
             index: '2dsphere'
-        },
-        formattedAddress: String
+        }
     },
     createdAt: {
         type: Date,

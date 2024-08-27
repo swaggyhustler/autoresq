@@ -1,5 +1,7 @@
 import { mappls } from "mappls-web-maps";
 import { useEffect, useRef, useState } from "react";
+import axios from 'axios';
+
 
 const mapplsClassObject = new mappls();
 // const mapplsPluginObject = new mappls_plugin();
@@ -8,6 +10,16 @@ const mapplsClassObject = new mappls();
 const Map = () => {
   const mapRef = useRef(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+    var geoData={
+                "type": "FeatureCollection",
+                "features": [
+                ]
+            };
+  const fetchLocationData=async()=>{
+      const data=await axios.get("http://localhost:3000/api/getMechLocation");
+      geoData.features=[...data.data]
+      console.log(geoData)
+    }
 
   const loadObject = { 
     map: true, 
@@ -18,39 +30,13 @@ const Map = () => {
 };
 
   useEffect(() => {
-    var geoData={
-                "type": "FeatureCollection",
-                "features": [{
-                "type": "Feature",
-                "properties":
-                    {
-                        "description":"noida",
-                        "icon":"https://apis.mapmyindia.com/map_v3/1.png",
-                        "icon-size":.75,
-                        "icon-offset":[0,-10],
-                        "text":"1",
-                        "text-size":10,
-                        "text-offset":[0,.6]
-                },
-                "geometry": {"type": "Point",
-                "coordinates": [28.544,77.5454]}
-                },{
-                "type": "Feature",
-                "properties": {"description":"faridabad","icon":"https://apis.mapmyindia.com/map_v3/1.png"},
-                "geometry": {"type": "Point",
-                "coordinates": [28.27189158,77.2158203125]}
-                },{
-                "type": "Feature",
-                "properties": {"description":"delhi","icon":"https://apis.mapmyindia.com/map_v3/1.png"},
-                "geometry": {"type": "Point",
-                "coordinates": [28.549511,77.2678250]}
-                }]
-            };
+    fetchLocationData();
     mapplsClassObject.initialize("1d96084012cfa906ae51ee449adaf925", loadObject, () => {
       const newMap = mapplsClassObject.Map({
         id: "map",
         properties: {
           center: [28.633, 77.2194],
+          // center: [latitude, longitude],
           zoom: 4,
         },
       });
