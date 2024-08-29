@@ -5,5 +5,5 @@ const router=express.Router();
 
 router
 .post("/addMechLocation", addMechLoc)
-.get("/getMechLocation", getMechLoc);
+.post("/getMechLocation", getMechLoc);
 export default router;

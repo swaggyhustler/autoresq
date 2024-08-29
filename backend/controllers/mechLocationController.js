@@ -1,5 +1,5 @@
 import MechLoc from "../models/MechLoc.js";
-
+var currentLoc=null;
 const addMechLoc= async (req, res)=>{
     try{
         console.log(req.body);
@@ -11,12 +11,9 @@ const addMechLoc= async (req, res)=>{
 }
 
 const getMechLoc=async(req, res)=>{
-    let userLocation=null;
-    navigator.geolocation.getCurrentPosition((position)=>{
-        userLocation.latitude=position.coords.latitude;
-        userLocation.longitude=position.coords.longitude;
-    });
-    const data=await MechLoc.find({}, {_id: 0, createdAt: 0, mechId: 0});
+    const {longitude, latitude}=req.body;
+    console.log(latitude, longitude);
+    const data=await MechLoc.find({}, {_id: 0, createdAt: 0, mechId: 0, __v: 0});
     res.send(data);
 }
 
