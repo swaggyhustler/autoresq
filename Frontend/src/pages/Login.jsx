@@ -1,6 +1,6 @@
 import Login_Register_Template from "../componets/Login_Register_Template.jsx";
 import InputField from "../componets/InputField.jsx";
-import {useContext} from "react";
+import {useState, useContext} from "react";
 import GlobalContext from "../contexts/GlobalContext.jsx";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css'; // Import CSS
 
 const Login=()=>{
     const {loginData} = useContext(GlobalContext); 
+    const [logError, setLogError]=useState(null);
     const navigate=useNavigate();
     const showErrorToast=(message)=>{
         toast.error(message);
@@ -25,6 +26,7 @@ const Login=()=>{
                 navigate("/login");
             }
         }catch(error){
+            setLogError(error.response.data.message);
             showErrorToast(error.response.data.message);
         }
     }
@@ -43,6 +45,7 @@ const Login=()=>{
                             </InputField>
                             <button type="submit" className="self-center bg-slate-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full w-1/3">Sign in</button>
                         </form>
+                        {logError?<p className="text-red-900">{logError}</p>:''}
                     </Login_Register_Template>
             </div>
             <ToastContainer />

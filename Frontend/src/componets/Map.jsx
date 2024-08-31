@@ -1,7 +1,9 @@
 import { mappls } from "mappls-web-maps";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
+import GlobalContext from "../contexts/GlobalContext";
 import axios from 'axios';
 import qs from 'qs';
+import ReactLoading from "react-loading";
 
 const mapplsClassObject = new mappls();
 
@@ -11,6 +13,9 @@ var geoData={
           };
 
 const Map = () => {
+  const [loading, setLoading]=useState(true);
+  const {currentCoords, setList}=useContext(GlobalContext);
+  // let currentCoords=null;
   const mapRef = useRef(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const generateToken= async ()=>{
@@ -27,30 +32,18 @@ const Map = () => {
   }
   const fetchLocationData=async()=>{
       
-      const getCurrentCoords=()=>{
-        return new Promise((resolve, reject)=>{
-          navigator.geolocation.getCurrentPosition((position)=>{
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            });
-            }, (error)=>{
-            console.log("E: Error getting users current locaiton");
-            reject(error);
-          });
-        });
-      }
-
       try{
-        const currentCoords=await getCurrentCoords();
-        const json=JSON.stringify({latitude: currentCoords.latitude, longitude: currentCoords.longitude})
+        // const coordinates=await getCurrentCoords();
+        // setCurrentCoords(coordinates);
+        if(currentCoords){
+          const json=JSON.stringify({latitude: currentCoords.latitude, longitude: currentCoords.longitude});
           const data=await axios.post("http://localhost:3000/api/getMechLocation", json, {
               headers: {
                 'Content-Type': 'application/json'
               }
             });
-        console.log(data.data);
-        return data.data;
+          return data.data;
+        }
       }catch(error){
         console.error(`E: Error while fetching locaitons\n${error}`);
       }
@@ -63,21 +56,36 @@ const Map = () => {
     version: '3.0', // // Optional, other version 3.5 also available with CSP headers
     libraries: ['polydraw'], //Optional for Polydraw and airspaceLayers
     plugins:['direction'] // Optional for All the plugins
-};
+  };
   useEffect( () => {
     const initialize= async ()=>{
       const data=await fetchLocationData();
-      geoData.features=[...data];
+      if(data){
+        geoData.features=[...data];
+        setList(data);
+      }
       const token=await generateToken();
       mapplsClassObject.initialize(token , loadObject, 
         () => {
           const newMap = mapplsClassObject.Map({
             id: "map",
             properties: {
-              center: [28.633, 77.2194],
+              // center: [28.633, 77.2194],
               // center: [latitude, longitude],
+              center: [currentCoords.latitude, currentCoords.longitude],
               zoom: 4,
             },
+          });
+
+          mapplsClassObject.Marker({
+            map: newMap,
+            position: {"lat": currentCoords.latitude,"lng": currentCoords.longitude},
+            width: 40,
+            height: 60,
+            clustersOptions: {"color": "yellow","bgcolor":"red"},
+            popupHtml: "Your Location",
+            html: `<div style="white-space:nowrap;font-size:15px;font-weight:bolder;padding left:15px;color:#000">Your Location<img src="https://apis.mapmyindia.com/map_v3/1.png"/></div>`,
+
           });
 
           newMap.on("load", () => {
@@ -88,11 +96,16 @@ const Map = () => {
           mapRef.current = newMap;
         });
       };
-      initialize();
+      if(currentCoords){
+        initialize();
+        setLoading(false);
+        }
     });
     
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="w-screen h-screen flex flex-col justify-evenly items-center">
+        <h1 className='text-5xl font-bold'>Garages near your location</h1>
+        {loading?<ReactLoading type="spin" color="black"/>:''}
         <div
             id="map"
             //   style={{ width: "100%", height: "99vh", display: "inline-block" }}

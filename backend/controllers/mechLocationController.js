@@ -12,8 +12,15 @@ const addMechLoc= async (req, res)=>{
 
 const getMechLoc=async(req, res)=>{
     const {longitude, latitude}=req.body;
-    console.log(latitude, longitude);
-    const data=await MechLoc.find({}, {_id: 0, createdAt: 0, mechId: 0, __v: 0});
+    const data=await MechLoc.find({
+        geometry: {
+            $near: {
+                    $geometry: { type: "Point",  coordinates: [ latitude, longitude ] },
+                    $minDistance: 0,
+                    $maxDistance: 500
+                }
+            }
+        }, {_id: 0, createdAt: 0, __v: 0});
     res.send(data);
 }
 
