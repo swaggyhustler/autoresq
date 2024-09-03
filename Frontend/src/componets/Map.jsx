@@ -33,8 +33,6 @@ const Map = () => {
   const fetchLocationData=async()=>{
       
       try{
-        // const coordinates=await getCurrentCoords();
-        // setCurrentCoords(coordinates);
         if(currentCoords){
           const json=JSON.stringify({latitude: currentCoords.latitude, longitude: currentCoords.longitude});
           const data=await axios.post("http://localhost:3000/api/getMechLocation", json, {
@@ -55,14 +53,27 @@ const Map = () => {
     layer: 'raster', // Optional Default Vector
     version: '3.0', // // Optional, other version 3.5 also available with CSP headers
     libraries: ['polydraw'], //Optional for Polydraw and airspaceLayers
-    plugins:['direction'] // Optional for All the plugins
+    plugins:['direction', 'getDistance'] // Optional for All the plugins
   };
   useEffect( () => {
     const initialize= async ()=>{
       const data=await fetchLocationData();
       if(data){
-        geoData.features=[...data];
         setList(data);
+        geoData.features=[
+          {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [currentCoords.latitude, currentCoords.longitude]
+            },
+            "properties": {
+                "name": "<div onclick=\"function1()\">MapmyIndia New Office</div>",
+                "description": "68,Okhla delhi",
+                "icon": "https://apis.mapmyindia.com/map_v3/1.png",
+                "text": "Your Location"
+            }
+        },...data];
       }
       const token=await generateToken();
       mapplsClassObject.initialize(token , loadObject, 
@@ -70,22 +81,9 @@ const Map = () => {
           const newMap = mapplsClassObject.Map({
             id: "map",
             properties: {
-              // center: [28.633, 77.2194],
-              // center: [latitude, longitude],
               center: [currentCoords.latitude, currentCoords.longitude],
               zoom: 4,
             },
-          });
-
-          mapplsClassObject.Marker({
-            map: newMap,
-            position: {"lat": currentCoords.latitude,"lng": currentCoords.longitude},
-            width: 40,
-            height: 60,
-            clustersOptions: {"color": "yellow","bgcolor":"red"},
-            popupHtml: "Your Location",
-            html: `<div style="white-space:nowrap;font-size:15px;font-weight:bolder;padding left:15px;color:#000">Your Location<img src="https://apis.mapmyindia.com/map_v3/1.png"/></div>`,
-
           });
 
           newMap.on("load", () => {
@@ -100,12 +98,12 @@ const Map = () => {
         initialize();
         setLoading(false);
         }
-    });
+    },[currentCoords]);
     
   return (
     <div className="w-screen h-screen flex flex-col justify-evenly items-center">
         <h1 className='text-5xl font-bold'>Garages near your location</h1>
-        {loading?<ReactLoading type="spin" color="black"/>:''}
+        {loading?<ReactLoading className="mt-6" type="spin" color="black"/>:''}
         <div
             id="map"
             //   style={{ width: "100%", height: "99vh", display: "inline-block" }}

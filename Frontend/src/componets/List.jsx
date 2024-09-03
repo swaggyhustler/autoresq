@@ -5,27 +5,37 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {useContext} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
+import ReactLoading from "react-loading";
 import GlobalContext from '../contexts/GlobalContext';
 
-function createData(mechId, description, button) {
-  return { mechId, description, button };
+function createData(mechId, description) {
+  return { mechId, description };
 }
 
-export default function List() {
+const List=()=>{
+    const [loading, setLoading] = useState(true);
     const {list} = useContext(GlobalContext);
-    let rows;
-    if(list){
-        rows=list.map((item)=>{
-            return createData(item.mechId, item.properties.description, '<button>Book</button>')
-        });
+    const rows=useRef([]);
+    const handleClick=(e)=>{
+      console.log(e.target.value);
     }
+    useEffect(()=>{
+      if(list){
+        rows.current=list.map((item)=>{
+            return createData(item.mechId, item.properties.description);
+        });
+        setLoading(false);
+      }
+    }, [list]);
+    
   return (
     <div className='h-screen w-screen flex flex-col justify-evenly items-center'>
       <h1 className='text-5xl font-bold'>List of Mechanics near your location</h1>
-      <div>
+      <div className='drop-shadow-2xl'>
+        {!loading?
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650, maxWidth: 1600 }} aria-label="simple table">
+            <Table sx={{ minWidth: 650, maxWidth: 900 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell align='center'>Mech ID</TableCell>
@@ -34,7 +44,7 @@ export default function List() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows?rows.map((row, index) => (
+                {rows.current.length>0?rows.current.map((row, index) => (
                   <TableRow
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -44,7 +54,7 @@ export default function List() {
                     </TableCell>
                     <TableCell align="center">{row.description}</TableCell>
                     <TableCell align="center">
-                      <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                      <button onClick={handleClick} value={row.mechId} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
                         Book
                       </button>
                     </TableCell>
@@ -53,7 +63,10 @@ export default function List() {
               </TableBody>
             </Table>
           </TableContainer>
+        :<ReactLoading type="spin" color="black"/>}
       </div>
     </div>
   );
 }
+
+export default List;

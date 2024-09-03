@@ -22,8 +22,8 @@ const GlobalContextProvider=({children})=>{
     React.useEffect(()=>{
         getCurrentCoords().then((res)=>{
             setCurrentCoords(res);
-        })
-    }, [])
+        });
+    }, []);
     
     return (
         <GlobalContext.Provider value={{loginData, registerData, currentCoords, list, setLoginData, setRegisterData, setCurrentCoords, setList}}>
