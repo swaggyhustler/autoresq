@@ -7,23 +7,25 @@ import express from 'express';
 import connectDB from './config/db.js';
 import authRoutes from "./routes/authRoutes.js";
 import cors from 'cors';
-import bodyParser from 'body-parser';
 import mechLocRoutes from './routes/mechLocRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
 
 const app = express();
 // Connect Database
-connectDB();
-app.use(cors());
+await connectDB();
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
 // Init Middleware
-app.use(express.json({ extended: false }));
-app.use(bodyParser.json()); // For JSON payloads
-app.use(bodyParser.urlencoded({ extended: true })); // For URL-encoded payloads
+app.use(express.json());
 
 // Define Routes
 app.use('/api/auth', authRoutes);
 app.use('/api', mechLocRoutes);
 app.use('/admin', adminRoutes);
+app.use('/api', bookingRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

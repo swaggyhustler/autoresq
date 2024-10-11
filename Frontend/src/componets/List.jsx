@@ -8,6 +8,7 @@ import Paper from '@mui/material/Paper';
 import {useContext, useEffect, useRef, useState} from 'react';
 import ReactLoading from "react-loading";
 import GlobalContext from '../contexts/GlobalContext';
+import AssistanceModal from "../componets/AssistanceModal";
 
 function createData(mechId, description) {
   return { mechId, description };
@@ -17,13 +18,13 @@ const List=()=>{
     const [loading, setLoading] = useState(true);
     const {list} = useContext(GlobalContext);
     const rows=useRef([]);
-    const handleClick=(e)=>{
-      console.log(e.target.value);
-    }
+    // const handleClick=(e)=>{
+    //   console.log(e.target.value);
+    // }
     useEffect(()=>{
       if(list){
         rows.current=list.map((item)=>{
-            return createData(item.mechId, item.properties.description);
+            return createData(item._id, item.properties.description);
         });
         setLoading(false);
       }
@@ -50,13 +51,14 @@ const List=()=>{
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell align='center' component="th" scope="row">
-                      {row.mechId}
+                      {index+1}
                     </TableCell>
                     <TableCell align="center">{row.description}</TableCell>
                     <TableCell align="center">
-                      <button onClick={handleClick} value={row.mechId} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                      {/* <button onClick={handleClick} value={row.mechId} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
                         Book
-                      </button>
+                      </button> */}
+                      <AssistanceModal mechId={row.mechId} garageName={row.description}>Book</AssistanceModal>
                     </TableCell>
                   </TableRow>
                 )):''}

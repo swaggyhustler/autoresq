@@ -6,7 +6,7 @@ import qs from 'qs';
 import ReactLoading from "react-loading";
 
 const mapplsClassObject = new mappls();
-
+let token = null;  
 var geoData={
             "type": "FeatureCollection",
             "features": []
@@ -35,6 +35,7 @@ const Map = () => {
       try{
         if(currentCoords){
           const json=JSON.stringify({latitude: currentCoords.latitude, longitude: currentCoords.longitude});
+          // const json = JSON.stringify({latitude: , longitude: });
           const data=await axios.post("http://localhost:3000/api/getMechLocation", json, {
               headers: {
                 'Content-Type': 'application/json'
@@ -75,7 +76,12 @@ const Map = () => {
             }
         },...data];
       }
-      const token=await generateToken();
+      try{
+        token=await generateToken();
+        console.log(token);
+      }catch(e){
+        console.log("Cannot generate Map");
+      }
       mapplsClassObject.initialize(token , loadObject, 
         () => {
           const newMap = mapplsClassObject.Map({

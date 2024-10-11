@@ -6,7 +6,7 @@ const BookingSchema = new mongoose.Schema({
         ref: 'MechLoc',
         required: true
     },
-    cust_id: {
+    user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -14,7 +14,7 @@ const BookingSchema = new mongoose.Schema({
     status:{
         type: String,
         enum: ['Pending', 'Accepted', 'Rejected'],
-        required: true
+        default: 'Pending'
     },
     created_at: {
         type: Date,
