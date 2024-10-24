@@ -2,7 +2,7 @@ import {create} from 'zustand';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_URL = "http://localhost:3000/api/auth";
+const API_URL = "backend/api/auth";
 
 axios.defaults.withCredentials=true;
 

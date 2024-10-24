@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import ReactLoading from "react-loading";
 import { useAuthStore } from '../stores/authStore.js';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 function createData(username, email, phone, booking_id, status) {
     return { username, email, phone, booking_id, status };
@@ -19,25 +20,42 @@ const List = () => {
     const [loading, setLoading] = useState(true);
     const [rows, setRows] = useState(null);
     const { user } = useAuthStore();
+    const [noOfRequests, setNoOfRequests] = useState(0);
+    const getList = async () => {
+        console.log(user?._id);
+        const res = await axios.get(`http://localhost:3000/api/requests/${user?._id}`);
+        console.log(res.data.data);
+        let bookings = res.data.data.map((item) => {
+            return createData(item.username, item.email, item.phone, item.booking_id, item.status);
+        });
+        setRows(bookings);
+    }
+    // useEffect(()=>{
+    //     toast.success("New request found");
+    // }, [rows.length]);
+    useEffect(()=>{
+        getList();
+        setLoading(false);
+        setNoOfRequests(rows?.length);
+        if(rows){
+            setNoOfRequests(rows.length);
+        }
+    }, []);
 
     useEffect(() => {
-        const getList = async () => {
-            console.log(user?._id);
-            const res = await axios.get(`http://localhost:3000/api/requests/${user?._id}`);
-            console.log(res.data.data);
-            let bookings = res.data.data.map((item) => {
-                return createData(item.username, item.email, item.phone, item.booking_id, item.status);
-            });
-            setRows(bookings);
-        }
         const interval = setInterval(() => {
             getList();
+            if(noOfRequests<rows?.length){
+                toast.success("New Request Found");
+                setNoOfRequests(rows.length);
+                console.log(noOfRequests);
+            }
             setLoading(false);
             // Simulate status update
         }, 10000);
-    
         return () => clearInterval(interval);    
     }, [user, rows]);
+
     const handleAccept = (e) => {
         console.log(e.target.value);
         const value = e.target.value;
@@ -54,9 +72,10 @@ const List = () => {
         })
     }
     return (
-        <div className='h-screen w-screen flex flex-col justify-evenly items-center'>
+        <div className='flex flex-col justify-evenly items-center p-10 h-[70vh]'>
+            <div className='flex flex-col items-center justify-evenly h-full bg-[#F5F7F8] p-10 rounded-lg'>
             <h1 className='text-5xl font-bold'>Recieved Requests</h1>
-            <div className='drop-shadow-2xl'>
+            <div className='drop-shadow-2xl max-h-[20%] min-h-[60%] overflow-scroll'>
                 {!loading ?
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650, maxWidth: 900 }} aria-label="simple table">
@@ -98,6 +117,7 @@ const List = () => {
                         </Table>
                     </TableContainer>
                     : <ReactLoading type="spin" color="black" />}
+            </div>
             </div>
         </div>
     );

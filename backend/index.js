@@ -1,8 +1,3 @@
-// const express = require('express');
-// const connectDB = require('./config/db');
-// const authRoutes = require('./routes/authRoutes');
-// const cors=require('cors');
-// const bodyParser = require("body-parser");
 import express from 'express';
 import connectDB from './config/db.js';
 import authRoutes from "./routes/authRoutes.js";
@@ -10,6 +5,7 @@ import cors from 'cors';
 import mechLocRoutes from './routes/mechLocRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 // Connect Database
@@ -20,6 +16,7 @@ app.use(cors({
 }));
 // Init Middleware
 app.use(express.json());
+app.use(cookieParser());
 
 // Define Routes
 app.use('/api/auth', authRoutes);

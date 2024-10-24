@@ -2,7 +2,7 @@ import MechanicBookings from "../componets/MechanicBookings";
 
 const Mechanic=()=>{
     return (
-        <div className="h-screen w-screen flex justify-center items-center">
+        <div className="h-[80vh]">
             <MechanicBookings />
         </div>
     )

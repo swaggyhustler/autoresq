@@ -18,15 +18,20 @@ const List = () => {
     const [loading, setLoading] = useState(true);
     const [rows, setRows] = useState(null);
     const { user } = useAuthStore();
+    const getList = async () => {
+        const res = await axios.get(`backend/api/bookings/${user?._id}`);
+        let bookings = res.data.data.map((item) => {
+            return createData(item.garage_name, item.mechanic_name, item.status);
+        });
+        setRows(bookings);
+    }
+
+    useEffect(()=>{
+        getList();
+        setLoading(false);
+    }, []);
 
     useEffect(() => {
-        const getList = async () => {
-            const res = await axios.get(`http://localhost:3000/api/bookings/${user?._id}`);
-            let bookings = res.data.data.map((item) => {
-                return createData(item.garage_name, item.mechanic_name, item.status);
-            });
-            setRows(bookings);
-        }
         const interval = setInterval(() => {
             getList();
             setLoading(false);
@@ -37,9 +42,10 @@ const List = () => {
     }, [user, rows]);
 
     return (
-        <div className='h-screen w-screen flex flex-col justify-evenly items-center'>
+        <div className='flex flex-col justify-evenly items-center p-10 h-[70vh]'>
+            <div className='flex flex-col flex flex-col items-center justify-evenly h-full bg-[#F5F7F8] p-10 rounded-lg'>
             <h1 className='text-5xl font-bold'>Your Booked Mechanics</h1>
-            <div className='drop-shadow-2xl'>
+            <div className='drop-shadow-2xl max-h-[20%] min-h-[60%] overflow-scroll'>
                 {!loading ?
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650, maxWidth: 900 }} aria-label="simple table">
@@ -66,11 +72,12 @@ const List = () => {
                                         </TableCell>
                                         <TableCell align="center"><span className='font-semibold'>{row.status}</span></TableCell>
                                     </TableRow>
-                                )) : 'Nothing'}
+                                )) : <TableRow><TableCell align='center' colSpan={4}><span className='font-semibold'>No Data to be Displayed</span></TableCell></TableRow>}
                             </TableBody>
                         </Table>
                     </TableContainer>
                     : <ReactLoading type="spin" color="black" />}
+            </div>
             </div>
         </div>
     );

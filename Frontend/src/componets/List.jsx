@@ -31,41 +31,43 @@ const List=()=>{
     }, [list]);
     
   return (
-    <div className='h-screen w-screen flex flex-col justify-evenly items-center'>
-      <h1 className='text-5xl font-bold'>List of Mechanics near your location</h1>
-      <div className='drop-shadow-2xl'>
-        {!loading?
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650, maxWidth: 900 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align='center'>Mech ID</TableCell>
-                  <TableCell align="center">Mech Name</TableCell>
-                  <TableCell align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.current.length>0?rows.current.map((row, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell align='center' component="th" scope="row">
-                      {index+1}
-                    </TableCell>
-                    <TableCell align="center">{row.description}</TableCell>
-                    <TableCell align="center">
-                      {/* <button onClick={handleClick} value={row.mechId} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
-                        Book
-                      </button> */}
-                      <AssistanceModal mechId={row.mechId} garageName={row.description}>Book</AssistanceModal>
-                    </TableCell>
+    <div className='flex flex-col justify-evenly items-center p-10 h-[70vh]'>
+      <div className='flex flex-col items-center justify-evenly h-full bg-[#F5F7F8] p-10 rounded-lg'>
+        <h1 className='text-5xl font-bold'>List of Mechanics near your location</h1>
+        <div className='drop-shadow-2xl max-h-[20%] min-h-[70%] overflow-scroll'>
+          {!loading?
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650, maxWidth: 900 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell align='center'>Mech ID</TableCell>
+                    <TableCell align="center">Mech Name</TableCell>
+                    <TableCell align="center">Action</TableCell>
                   </TableRow>
-                )):''}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        :<ReactLoading type="spin" color="black"/>}
+                </TableHead>
+                <TableBody>
+                  {rows.current.length>0?rows.current.map((row, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell align='center' component="th" scope="row">
+                        {index+1}
+                      </TableCell>
+                      <TableCell align="center">{row.description}</TableCell>
+                      <TableCell align="center">
+                        {/* <button onClick={handleClick} value={row.mechId} className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                          Book
+                        </button> */}
+                        <AssistanceModal mechId={row.mechId} garageName={row.description}>Book</AssistanceModal>
+                      </TableCell>
+                    </TableRow>
+                  )):<TableRow><TableCell align='center' colSpan={4}><span className='font-semibold'>No Data to be Displayed</span></TableCell></TableRow>}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          :<ReactLoading type="spin" color="black"/>}
+        </div>
       </div>
     </div>
   );

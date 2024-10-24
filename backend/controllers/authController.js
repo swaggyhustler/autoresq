@@ -1,8 +1,79 @@
 import Mechanic from '../models/Mechanic.js';
 import User from '../models/User.js';
-import { sendVerificationEmail } from '../nodemailer/emails.js';
+import { sendVerificationEmail, sendWelcomeEmail } from '../nodemailer/emails.js';
 import { hashPassword, comparePassword } from '../utils/authUtility.js';
 import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js';
+
+
+const checkAuth = async (req, res)=>{
+    const {user_id, role} = req.body;
+    try{
+        let user = null;
+        if(role === 'user'){
+            user = await User.findById(user_id);
+        }else if(role == 'mechanic'){
+            user = await Mechanic.findById(user_id);
+        }else{
+            return res.status(404).json({message: "User not found", success: false});
+        }
+
+        if(user===null){
+            return res.status(404).json({message: 'User not found', success: false});
+        }
+        res.status(200).json({
+            message: "User is authorized", 
+            success: true, 
+            user: {
+                ...user._doc,
+                password: undefined
+            }
+        });
+    }catch(error){
+        console.log("Cannot perfrom authorization of user");
+        res.status(500).json({message: "Cannot authorize user", success: false});
+    }
+}
+
+const verifyEmail = async (req, res)=>{
+    const {code, role} = req.body;
+    try{
+        let user= null;
+        if(role === "user"){
+            user = await User.findOne({
+                verificationToken: code,
+                verificationTokenExpiresAt: {$gt: Date.now()}   
+            });
+        }else if(role === 'mechanic'){
+            user = await Mechanic.findOne({
+                verificationToken: code,
+                verificationTokenExpiresAt: {$gt: Date.now()}
+            });
+        }else{
+            return res.status(401).json({message: "Cannot verify provided email", success: false});
+        }
+
+        if(user===null){
+            return res.status(404).json({message: 'User not found', success: false});
+        }
+
+        user.isVerified = true;
+        user.verificationToken = undefined;
+        user.verificationTokenExpiresAt = undefined;
+        await user.save();
+        
+        if(role==='mechanic'){
+            await sendWelcomeEmail(user.email, user.mechanic_name);
+        }else{
+            await sendWelcomeEmail(user.email, user.username);
+        }
+
+        res.status(200).json({message: "Email verified successfully", success: true, data: {...user._doc, password: undefined}});
+
+    }catch(error){
+        console.log("Cannot verity provided email ", error);
+        res.status(500).json({message: "Cannot verify provided email", success: false});
+    }
+}
 
 const registerUser = async (req, res)=>{
     try{
@@ -69,40 +140,6 @@ const registerMechanic= async (req, res)=>{
     }
 }
 
-// const register = async (req, res) => {
-//   const { email } = req.body;
-
-//   const userExists = await User.findOne({ email });
-//   if (userExists) {
-//     return res.status(400).json({ message: 'User already exists' });
-//   }
-  
-//   const {name, password}=req.body;
-//   const hashedPassword = await hashPassword(password);
-//   const newUser = new User({name, mobile, email, password: hashedPassword});
-//   newUser.save();
-// };
-
-// const login = async (req, res) => {
-//   const { email } = req.body;
-
-//   const user = await User.findOne({ email });
-//   if (!user) {
-//     return res.status(400).json({userAuthorized: false, message: "User doesn't exist"});
-//   }
-
-//     const {password}=req.body;
-
-//     const result = await comparePassword(password, user.password);
-
-//     if(result){
-//         return res.status(200).json({userAuthorized: true});
-//     }else{
-//         return res.status(401).json({userAuthorized: false, message: "Wrong Password"});
-//     }
-
-// };
-
 const login = async (req, res) => {
     try{
         const {password, email, role} = req.body;
@@ -136,4 +173,9 @@ const login = async (req, res) => {
     }
 }
 
-export {registerUser, registerMechanic, login}
+const logout = (req, res)=>{
+    res.clearCookie("token");
+    res.status(200).json({message: "Logged out of the application sucessfully", success: true});
+}
+
+export {registerUser, registerMechanic, login, checkAuth, verifyEmail, logout}

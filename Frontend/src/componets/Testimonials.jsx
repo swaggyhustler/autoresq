@@ -16,6 +16,8 @@ const testimonialsData = [
 
 const Testimonials = () => {
   return (
+
+
     <div className="bg-gray-100 py-20">
       <h2 className="text-3xl font-bold text-center mb-10">What Our Customers Say</h2>
       <div className="container mx-auto flex flex-col items-center">
@@ -27,6 +29,8 @@ const Testimonials = () => {
         ))}
       </div>
     </div>
+
+
   );
 }
 

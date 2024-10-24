@@ -4,13 +4,14 @@ import  {useState, useContext} from "react";
 import GlobalContext from "../contexts/GlobalContext.jsx";
 import ReactLoading from "react-loading";
 import { useAuthStore } from "../stores/authStore.js";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Register=()=>{
     // const [loading, setLoading]=useState(false);
     const {registerData, setRegisterData}=useContext(GlobalContext);
     const [registerMechanic, setRegisterMechanic] = useState(true);
     const {signupUser, signupMechanic, loading} = useAuthStore();
+    const navigate = useNavigate();
     // const delay=(ms)=>{
     //     return new Promise(resolve=>setTimeout(resolve, ms));
     // }
@@ -22,7 +23,7 @@ const Register=()=>{
                 // .then(setLoading(true))
                 // .then(navigate("/login"));
                 signupUser(registerData);
-                return redirect('/login');
+                return navigate('/verify-email');
             }
             if(registerData.role === 'mechanic'){
                 setRegisterMechanic(false);
@@ -38,7 +39,7 @@ const Register=()=>{
         // .then(setLoading(false))
         // .then(navigate("/login"));
         signupMechanic(registerData);
-        return redirect('/login');
+        return navigate('/verify-email');
     }
 
     const handleChange = (e) =>{

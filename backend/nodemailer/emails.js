@@ -6,9 +6,9 @@ const sendVerificationEmail = async (email, verificationToken)=>{
     mailTransporter
     .sendMail(
       {
-        // from: 'subhashgedam10@gmail.com',
-        // to: email,
-        subject: 'Email Verification Code - Hyper Local ECommerce',
+        from: 'subhashgedam10@gmail.com',
+        to: email,
+        subject: 'Email Verification Code - AutoResQ',
         html: VERIFICATION_EMAIL_TEMPLATE.replace('{verificationCode}', verificationToken)
       },
         function (err, data) {
@@ -29,9 +29,9 @@ const sendWelcomeEmail = async (email, name)=>{
       mailTransporter
     .sendMail(
       {
-        // from: 'subhashgedam10@gmail.com',
-        // to: email,
-        subject: 'Welcome to HyperLocal',
+        from: 'subhashgedam10@gmail.com',
+        to: email,
+        subject: 'Welcome to AutoResQ',
         html: WELCOME_EMAIL_TEMPLATE.replace('{name}', name.charAt(0).toUpperCase() + name.slice(1))
       },
         function (err, data) {
