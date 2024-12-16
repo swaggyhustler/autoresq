@@ -77,7 +77,7 @@ const Map = () => {
             },
             "properties": {
               "name": "<div onclick=\"function1()\">MapmyIndia New Office</div>",
-              "description": "68, Okhla Delhi",
+              "description": "Your Location",
               "icon": "https://apis.mapmyindia.com/map_v3/1.png",
               "text": "Your Location"
             }

@@ -21,6 +21,7 @@ const Navbar=()=>{
                 <ul className="flex justify-autoud gap-5">
                     <li className="bg-slate-300 px-4 py-2 rounded-lg hover:bg-slate-400"><NavLink to="/home">Home</NavLink></li>
                     <li className="bg-slate-300 px-4 py-2 rounded-lg hover:bg-slate-400"><NavLink to="/mechanic">List Requests</NavLink></li>
+                    <li className="bg-slate-300 px-4 py-2 rounded-lg hover:bg-slate-400"><button onClick={async ()=>{await logout();}}>Logout</button></li>
                 </ul>
             }   
             <a href="8200342755">+91 8200342755</a>
